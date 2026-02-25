@@ -39,3 +39,10 @@ steps:
     docker stop $(imageName)-container
   displayName: Cleanup container
   condition: always()
+
+- task: Docker@2
+  inputs:
+    containerRegistry: 'ConDotNetApp'
+    repository: 'repoDotNetApp'
+    command: 'buildAndPush'
+    Dockerfile: './Dockerfile'
