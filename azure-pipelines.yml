@@ -1,17 +1,41 @@
-# ASP.NET Core
-# Build and test ASP.NET Core projects targeting .NET Core.
-# Add steps that run tests, create a NuGet package, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
 trigger:
 - main
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
 
 variables:
-  buildConfiguration: 'Release'
+  imageName: 'dotnetcoreapp'
+  imageTag: '$(Build.BuildId)'
 
 steps:
-- script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
+- checkout: self
+
+- script: |
+    set -euo pipefail
+    docker version
+    docker build -f Dockerfile -t $(imageName):$(imageTag) .
+  displayName: Build Docker image
+
+- script: |
+    set -euo pipefail
+    docker run -d --rm --name $(imageName)-container -p 8080:8080 $(imageName):$(imageTag)
+
+    echo "Waiting for app to start..."
+    for i in {1..30}; do
+      if curl -fsS http://localhost:8080/ >/dev/null; then
+        echo "Container is healthy."
+        break
+      fi
+      sleep 2
+    done
+
+    curl -i http://localhost:8080/
+  displayName: Run container and smoke test
+
+- script: |
+    set +e
+    docker logs $(imageName)-container
+    docker stop $(imageName)-container
+  displayName: Cleanup container
+  condition: always()
