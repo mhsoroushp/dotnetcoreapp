@@ -6,7 +6,8 @@ pool:
 
 variables:
   imageName: 'dotnetcoreapp'
-  imageTag: '$(Build.BuildId) latest'
+  imageTag: '$(Build.BuildId)'
+  latestTag: 'latest'
 
 steps:
 - checkout: self
@@ -14,7 +15,7 @@ steps:
 - script: |
     set -euo pipefail
     docker version
-    docker build -f Dockerfile -t $(imageName):$(imageTag) -t $(imageName):latest .
+    docker build -f Dockerfile -t $(imageName):$(imageTag) -t $(imageName):$(latestTag) .
   displayName: Build Docker image
 
 - script: |
