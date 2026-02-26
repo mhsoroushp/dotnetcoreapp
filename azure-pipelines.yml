@@ -6,7 +6,7 @@ pool:
 
 variables:
   imageName: 'dotnetcoreapp'
-  imageTag: '$(Build.BuildId)'
+  imageTag: '$(Build.BuildId) latest'
 
 steps:
 - checkout: self
