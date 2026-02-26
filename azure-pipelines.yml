@@ -49,3 +49,9 @@ steps:
     tags: |
       $(imageTag)
       latest
+- task: AzureWebAppContainer@1
+  displayName: 'Azure Web App on Container Deploy'
+  inputs:
+    azureSubscription: 'Subscription_cicd(c78e9653-2dd1-49b6-bd4b-fdc49529105f)'
+    appName: 'sample-docker-web-app'
+    containers: 'acrwebapp.azurecr.io/repodotnetapp:latest'
