@@ -6,7 +6,6 @@ pool:
 
 variables:
   imageName: 'dotnetcoreapp'
-  imageTag: '$(Build.BuildId)'
   latestTag: 'latest'
 
 steps:
@@ -15,12 +14,12 @@ steps:
 - script: |
     set -euo pipefail
     docker version
-    docker build -f Dockerfile -t $(imageName):$(imageTag) -t $(imageName):$(latestTag) .
+    docker build -f Dockerfile -t $(imageName):$(latestTag) .
   displayName: Build Docker image
 
 - script: |
     set -euo pipefail
-    docker run -d --rm --name $(imageName)-container -p 8080:8080 $(imageName):$(imageTag)
+    docker run -d --rm --name $(imageName)-container -p 8080:8080 $(imageName):$(latestTag)
 
     echo "Waiting for app to start..."
     for i in {1..30}; do
@@ -48,9 +47,8 @@ steps:
     command: 'buildAndPush'
     Dockerfile: './Dockerfile'
     tags: |
-      $(imageTag)
       latest
-      
+
 - task: AzureWebAppContainer@1
   displayName: 'Azure Web App on Container Deploy'
   inputs:
