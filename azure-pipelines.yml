@@ -7,6 +7,7 @@ pool:
 variables:
   imageName: 'dotnetcoreapp'
   imageTag: '$(Build.BuildId)'
+  latestTag: 'latest'
 
 steps:
 - checkout: self
@@ -14,7 +15,7 @@ steps:
 - script: |
     set -euo pipefail
     docker version
-    docker build -f Dockerfile -t $(imageName):$(imageTag) .
+    docker build -f Dockerfile -t $(imageName):$(imageTag) -t $(imageName):$(latestTag) .
   displayName: Build Docker image
 
 - script: |
@@ -49,9 +50,10 @@ steps:
     tags: |
       $(imageTag)
       latest
+      
 - task: AzureWebAppContainer@1
   displayName: 'Azure Web App on Container Deploy'
   inputs:
     azureSubscription: 'Subscription_cicd(c78e9653-2dd1-49b6-bd4b-fdc49529105f)'
     appName: 'sample-docker-web-app'
-    containers: 'acrwebapp.azurecr.io/repodotnetapp:67'
+    containers: 'acrwebapp.azurecr.io/repodotnetapp:latest'
