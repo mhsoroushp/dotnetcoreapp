@@ -54,4 +54,4 @@ steps:
   inputs:
     azureSubscription: 'Subscription_cicd(c78e9653-2dd1-49b6-bd4b-fdc49529105f)'
     appName: 'sample-docker-web-app'
-    containers: 'acrwebapp.azurecr.io/repodotnetapp:latest'
+    containers: 'acrwebapp.azurecr.io/repodotnetapp:67'
